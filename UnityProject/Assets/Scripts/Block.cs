@@ -6,11 +6,22 @@ public class Block
 		Empty,
 		Put
 	}
-	public Status mStatus = Status.Empty;
-	public Vector3 mPos;
+	GameObject mGameObject;
+	public Status mStatus{get; private set;} = Status.Empty;
+	public void Clear()
+	{
+		mStatus = Status.Empty;
+		GameObject.Destroy(mGameObject);
+	}
+	public void Set(GameObject inGameObject)
+	{
+		mStatus = Status.Put;
+		mGameObject = inGameObject;
+	}
 }
 public class BlockTable
 {
+	public delegate void ForechDelegate(Vector2Int inPos, Block inBlock);
 	Block[,] mBlock;
 	public BlockTable(Vector2Int inSize)
 	{
@@ -35,5 +46,16 @@ public class BlockTable
 			return null;
 		}
 		return mBlock[y, x];
+	}
+	public void ForechBlock(ForechDelegate inDelegate)
+	{
+		var half = new Vector2Int(mBlock.GetLength(1) / 2, mBlock.GetLength(0) / 2);
+		for(int y = 0; y < mBlock.GetLength(0); ++y)
+		{
+			for(int x = 0; x < mBlock.GetLength(1); ++x)
+			{
+				inDelegate(new Vector2Int(x, y) - half, mBlock[y, x]);
+			}
+		}
 	}
 }
