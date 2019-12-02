@@ -8,6 +8,8 @@ public class Pawn : MonoBehaviour
 	int mBlockCount = 0;
 	[SerializeField]
 	BlockTable mBlockTable = null;
+	[SerializeField]
+	int mHP = 0;
 	// ------------------------------------------------------------------------
 	/// @brief 移動
 	// ------------------------------------------------------------------------
@@ -63,6 +65,9 @@ public class Pawn : MonoBehaviour
 				}
 			}
 		}
+	}
+	void OnCollisionEnter(Collision inColl)
+	{
 	}
 	// ------------------------------------------------------------------------
 	/// @brief 更新

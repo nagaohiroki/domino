@@ -1,35 +1,59 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-public class Block
-{
-	public enum Status
-	{
-		Empty,
-		Put
-	}
-	GameObject mGameObject;
-	public Status mStatus{get; private set;} = Status.Empty;
-	public void Clear()
-	{
-		mStatus = Status.Empty;
-		GameObject.Destroy(mGameObject);
-	}
-	public void Set(GameObject inGameObject)
-	{
-		mStatus = Status.Put;
-		mGameObject = inGameObject;
-	}
-}
 public class BlockTable : MonoBehaviour
 {
 	delegate void ForechDelegate(Vector2Int inPos, Block inBlock);
 	[SerializeField]
+	GameObject mCube = null;
+	[SerializeField]
 	Vector2Int mSize = Vector2Int.zero;
 	[SerializeField]
 	float mScale = 0.0f;
-	[SerializeField]
-	GameObject mCube = null;
 	Block[,] mBlock;
+	// ------------------------------------------------------------------------
+	/// @brief セット
+	///
+	/// @param inIndex
+	// ------------------------------------------------------------------------
+	public bool SetBlock(Vector2Int inIndex)
+	{
+		var block = GetBlock(inIndex);
+		if(block == null || block.mUsed)
+		{
+			return false;
+		}
+		block.Set(GenerateBlock(IndexToPos(inIndex), mCube));
+		return true;
+	}
+	// ------------------------------------------------------------------------
+	/// @brief 削除
+	///
+	/// @param inIndex
+	///
+	/// @return
+	// ------------------------------------------------------------------------
+	public bool ClearBlock(Vector2Int inIndex)
+	{
+		var block = GetBlock(inIndex);
+		if(block == null || !block.mUsed)
+		{
+			return false;
+		}
+		block.Clear();
+		return true;
+	}
+	// ------------------------------------------------------------------------
+	/// @brief カーソル位置
+	///
+	/// @param inIndex
+	///
+	/// @return
+	// ------------------------------------------------------------------------
+	public void Cursor(Vector2Int inIndex)
+	{
+		mCube.transform.position = IndexToPos(inIndex);
+		mCube.transform.localScale = Vector3.one * mScale;
+	}
 	// ------------------------------------------------------------------------
 	/// @brief 位置からIndex取得
 	///
@@ -63,7 +87,7 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @param inPos
 	///
-	/// @return 
+	/// @return
 	// ------------------------------------------------------------------------
 	Block GetBlock(Vector2Int inPos)
 	{
@@ -82,7 +106,7 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @param inDelegate
 	///
-	/// @return 
+	/// @return
 	// ------------------------------------------------------------------------
 	void ForechBlock(ForechDelegate inDelegate)
 	{
@@ -94,62 +118,6 @@ public class BlockTable : MonoBehaviour
 				inDelegate(new Vector2Int(x, y) - half, mBlock[y, x]);
 			}
 		}
-	}
-	public void Cursor(Vector2Int inIndex)
-	{
-		mCube.transform.position = GetBlockPos(inIndex);
-		mCube.transform.localScale = Vector3.one * mScale;
-	}
-	// ------------------------------------------------------------------------
-	/// @brief セット
-	///
-	/// @param inIndex
-	// ------------------------------------------------------------------------
-	public bool SetBlock(Vector2Int inIndex)
-	{
-		var block = GetBlock(inIndex);
-		if(block == null)
-		{
-			return false;
-		}
-		if (block.mStatus != Block.Status.Empty)
-		{
-			return false;
-		}
-		block.Set(GenerateBlock(GetBlockPos(inIndex), mCube));
-		return true;
-	}
-	// ------------------------------------------------------------------------
-	/// @brief 
-	///
-	/// @param inIndex
-	///
-	/// @return 
-	// ------------------------------------------------------------------------
-	public bool ClearBlock(Vector2Int inIndex)
-	{
-		var block = GetBlock(inIndex);
-		if (block == null)
-		{
-			return false;
-		}
-		if (block.mStatus == Block.Status.Empty)
-		{
-			return false;
-		}
-		block.Clear();
-		return true;
-	}
-	// ------------------------------------------------------------------------
-	/// @brief 箱位置
-	///
-	/// @param inIndex
-	///
-	/// @return
-	// ------------------------------------------------------------------------
-	Vector3 GetBlockPos(Vector2Int inIndex)
-	{
-		return IndexToPos(inIndex) + (Vector3.one - Vector3.up) * mScale * 0.5f;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief ブロック生成
@@ -163,15 +131,15 @@ public class BlockTable : MonoBehaviour
 	{
 		var obj = Instantiate(inPrefab, inPos, Quaternion.identity);
 		obj.SetActive(true);
-		obj.GetComponent<Collider>().isTrigger = false;
 		obj.transform.localScale = Vector3.one * mScale;
-		var render = obj.GetComponent<Renderer>();
+		var child = obj.transform.GetChild(0);
+		child.GetComponent<NavMeshObstacle>().enabled = true;
+		var render = child.GetComponent<Renderer>();
 		render.material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
-		obj.GetComponent<NavMeshObstacle>().enabled = true;
 		return obj;
 	}
 	// ------------------------------------------------------------------------
-	/// @brief 
+	/// @brief
 	// ------------------------------------------------------------------------
 	void Start()
 	{
@@ -184,7 +152,7 @@ public class BlockTable : MonoBehaviour
 				mBlock[y, x] = new Block();
 			}
 		}
-
+		// ブロック配置
 		ForechBlock((inPos, inBlock) =>
 		{
 			if(Random.Range(0, 100) == 0)
