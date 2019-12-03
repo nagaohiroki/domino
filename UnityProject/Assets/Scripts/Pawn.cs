@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 public class Pawn : MonoBehaviour
 {
 	[SerializeField]
@@ -7,9 +8,11 @@ public class Pawn : MonoBehaviour
 	[SerializeField]
 	int mBlockCount = 0;
 	[SerializeField]
+	int mHP = 0;
+	[SerializeField]
 	BlockTable mBlockTable = null;
 	[SerializeField]
-	int mHP = 0;
+	Text mText = null;
 	// ------------------------------------------------------------------------
 	/// @brief 移動
 	// ------------------------------------------------------------------------
@@ -68,6 +71,21 @@ public class Pawn : MonoBehaviour
 	}
 	void OnCollisionEnter(Collision inColl)
 	{
+		var enemy = inColl.gameObject.GetComponent<Enemy>();
+		if (enemy == null)
+		{
+			return;
+		}
+		--mHP;
+		Debug.Log(inColl.gameObject.name);
+	}
+	// ------------------------------------------------------------------------
+	/// @brief テキスト
+	// ------------------------------------------------------------------------
+	void Text()
+	{
+		var text = string.Format("HP : {0}\nItem : {1}\n", mHP, mBlockCount);
+		mText.text = text;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief 更新
@@ -76,5 +94,6 @@ public class Pawn : MonoBehaviour
 	{
 		Move();
 		Shot();
+		Text();
 	}
 }
