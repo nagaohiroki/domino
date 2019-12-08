@@ -13,6 +13,9 @@ public class Pawn : MonoBehaviour
 	BlockTable mBlockTable = null;
 	[SerializeField]
 	Text mText = null;
+	[SerializeField]
+	ItemList mItemList = null;
+	int mCurrentType = 0;
 	// ------------------------------------------------------------------------
 	/// @brief 移動
 	// ------------------------------------------------------------------------
@@ -46,25 +49,25 @@ public class Pawn : MonoBehaviour
 	// ------------------------------------------------------------------------
 	/// @brief ショット
 	// ------------------------------------------------------------------------
-	void Shot()
+	void Shot(int inType)
 	{
 		// カーソル更新
 		var index = mBlockTable.PosToIndex(GetCursorPos());
-		mBlockTable.Cursor(index);
+		mBlockTable.Cursor(index, inType);
 		if(Input.GetButton("Fire1"))
 		{
 			if(mBlockTable.ClearBlock(index))
 			{
-				++mBlockCount;
+				mItemList.Add(inType, 1);
 			}
 		}
 		if(Input.GetButton("Fire2"))
 		{
-			if(mBlockCount > 0)
+			if(mItemList.HasItem(inType))
 			{
-				if(mBlockTable.SetBlock(index))
+				if(mBlockTable.SetBlock(index, inType))
 				{
-					--mBlockCount;
+					mItemList.Sub(inType, 1);
 				}
 			}
 		}
@@ -72,7 +75,7 @@ public class Pawn : MonoBehaviour
 	void OnCollisionEnter(Collision inColl)
 	{
 		var enemy = inColl.gameObject.GetComponent<Enemy>();
-		if (enemy == null)
+		if(enemy == null)
 		{
 			return;
 		}
@@ -93,7 +96,7 @@ public class Pawn : MonoBehaviour
 	void Update()
 	{
 		Move();
-		Shot();
+		Shot(mCurrentType);
 		Text();
 	}
 }

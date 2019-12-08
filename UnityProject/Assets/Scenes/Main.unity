@@ -360,9 +360,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mSpeed: 10
   mBlockCount: 0
-  mHP: 0
+  mHP: 10
   mBlockTable: {fileID: 1573755981}
   mText: {fileID: 1841003395}
+  mItemList:
+    mItemList: []
 --- !u!1 &357944895
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,9 +634,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e9b9154ca0b4597a9f85c8b7d7cd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mCube: {fileID: 1785395209}
   mSize: {x: 10, y: 10}
   mScale: 2
+  mCubes:
+  - {fileID: 1785395209}
 --- !u!4 &1573755982
 Transform:
   m_ObjectHideFlags: 0
@@ -880,7 +883,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1785395210}
   m_Layer: 0
-  m_Name: Block
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

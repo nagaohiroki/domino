@@ -1,28 +1,44 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 public class BlockTable : MonoBehaviour
 {
 	delegate void ForechDelegate(Vector2Int inPos, Block inBlock);
 	[SerializeField]
-	GameObject mCube = null;
-	[SerializeField]
 	Vector2Int mSize = Vector2Int.zero;
 	[SerializeField]
 	float mScale = 0.0f;
+	[SerializeField]
+	List<GameObject> mCubes = null;
 	Block[,] mBlock;
+	// ------------------------------------------------------------------------
+	/// @brief 
+	///
+	/// @param inIndex
+	///
+	/// @return 
+	// ------------------------------------------------------------------------
+	GameObject GetCube(int inIndex)
+	{
+		if(mCubes == null || inIndex < 0 || inIndex >= mCubes.Count)
+		{
+			return null;
+		}
+		return mCubes[inIndex];
+	}
 	// ------------------------------------------------------------------------
 	/// @brief セット
 	///
 	/// @param inIndex
 	// ------------------------------------------------------------------------
-	public bool SetBlock(Vector2Int inIndex)
+	public bool SetBlock(Vector2Int inIndex, int inType)
 	{
 		var block = GetBlock(inIndex);
 		if(block == null || block.mUsed)
 		{
 			return false;
 		}
-		block.Set(GenerateBlock(IndexToPos(inIndex), mCube));
+		block.Set(GenerateBlock(IndexToPos(inIndex), GetCube(inType)));
 		return true;
 	}
 	// ------------------------------------------------------------------------
@@ -49,10 +65,15 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	public void Cursor(Vector2Int inIndex)
+	public void Cursor(Vector2Int inIndex, int inType)
 	{
-		mCube.transform.position = IndexToPos(inIndex);
-		mCube.transform.localScale = Vector3.one * mScale;
+		var cube = GetCube(inType);
+		if(cube == null)
+		{
+			return;
+		}
+		cube.transform.position = IndexToPos(inIndex);
+		cube.transform.localScale = Vector3.one * mScale;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief 位置からIndex取得
@@ -157,7 +178,7 @@ public class BlockTable : MonoBehaviour
 		{
 			if(Random.Range(0, 100) == 0)
 			{
-				SetBlock(inPos);
+				SetBlock(inPos, 0);
 			}
 		});
 	}
