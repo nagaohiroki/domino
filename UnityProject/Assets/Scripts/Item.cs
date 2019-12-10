@@ -35,7 +35,6 @@ public class ItemList
 		}
 		item.mCount = Mathf.Max(0, item.mCount - inCount);
 	}
-
 	public bool HasItem(int inKey)
 	{
 		var item = GetItem(inKey);

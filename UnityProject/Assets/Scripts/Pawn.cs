@@ -6,15 +6,14 @@ public class Pawn : MonoBehaviour
 	[SerializeField]
 	float mSpeed = 0.0f;
 	[SerializeField]
-	int mBlockCount = 0;
-	[SerializeField]
 	int mHP = 0;
 	[SerializeField]
-	BlockTable mBlockTable = null;
+	GameManager mGameManager = null;
 	[SerializeField]
 	Text mText = null;
 	[SerializeField]
 	ItemList mItemList = null;
+	[SerializeField]
 	int mCurrentType = 0;
 	// ------------------------------------------------------------------------
 	/// @brief 移動
@@ -51,12 +50,12 @@ public class Pawn : MonoBehaviour
 	// ------------------------------------------------------------------------
 	void Shot(int inType)
 	{
-		// カーソル更新
-		var index = mBlockTable.PosToIndex(GetCursorPos());
-		mBlockTable.Cursor(index, inType);
+		var blockTable = mGameManager.mBlockTable;
+		var index = blockTable.PosToIndex(GetCursorPos());
+		blockTable.Cursor(index, inType);
 		if(Input.GetButton("Fire1"))
 		{
-			if(mBlockTable.ClearBlock(index))
+			if(blockTable.ClearBlock(index))
 			{
 				mItemList.Add(inType, 1);
 			}
@@ -65,29 +64,23 @@ public class Pawn : MonoBehaviour
 		{
 			if(mItemList.HasItem(inType))
 			{
-				if(mBlockTable.SetBlock(index, inType))
+				if(blockTable.SetBlock(index, inType))
 				{
 					mItemList.Sub(inType, 1);
 				}
 			}
 		}
 	}
-	void OnCollisionEnter(Collision inColl)
+	public void Damage(int inDamage)
 	{
-		var enemy = inColl.gameObject.GetComponent<Enemy>();
-		if(enemy == null)
-		{
-			return;
-		}
-		--mHP;
-		Debug.Log(inColl.gameObject.name);
+		mHP -= inDamage;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief テキスト
 	// ------------------------------------------------------------------------
 	void Text()
 	{
-		var text = string.Format("HP : {0}\nItem : {1}\n", mHP, mBlockCount);
+		var text = string.Format("HP : {0}\n", mHP);
 		mText.text = text;
 	}
 	// ------------------------------------------------------------------------

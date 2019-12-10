@@ -11,12 +11,14 @@ public class BlockTable : MonoBehaviour
 	[SerializeField]
 	List<GameObject> mCubes = null;
 	Block[,] mBlock;
+	public int CubeNum{get{return mCubes == null ? 0 : mCubes.Count;}}
+	GameObject mCursor = null;
 	// ------------------------------------------------------------------------
-	/// @brief 
+	/// @brief
 	///
 	/// @param inIndex
 	///
-	/// @return 
+	/// @return
 	// ------------------------------------------------------------------------
 	GameObject GetCube(int inIndex)
 	{
@@ -67,13 +69,7 @@ public class BlockTable : MonoBehaviour
 	// ------------------------------------------------------------------------
 	public void Cursor(Vector2Int inIndex, int inType)
 	{
-		var cube = GetCube(inType);
-		if(cube == null)
-		{
-			return;
-		}
-		cube.transform.position = IndexToPos(inIndex);
-		cube.transform.localScale = Vector3.one * mScale;
+		mCursor.transform.position = IndexToPos(inIndex);
 	}
 	// ------------------------------------------------------------------------
 	/// @brief 位置からIndex取得
@@ -131,10 +127,12 @@ public class BlockTable : MonoBehaviour
 	// ------------------------------------------------------------------------
 	void ForechBlock(ForechDelegate inDelegate)
 	{
-		var half = new Vector2Int(mBlock.GetLength(1) / 2, mBlock.GetLength(0) / 2);
-		for(int y = 0; y < mBlock.GetLength(0); ++y)
+		int numX = mBlock.GetLength(1);
+		int numY = mBlock.GetLength(0);
+		var half = new Vector2Int(numX / 2, numY / 2);
+		for(int y = 0; y < numY; ++y)
 		{
-			for(int x = 0; x < mBlock.GetLength(1); ++x)
+			for(int x = 0; x < numX; ++x)
 			{
 				inDelegate(new Vector2Int(x, y) - half, mBlock[y, x]);
 			}
@@ -153,17 +151,21 @@ public class BlockTable : MonoBehaviour
 		var obj = Instantiate(inPrefab, inPos, Quaternion.identity);
 		obj.SetActive(true);
 		obj.transform.localScale = Vector3.one * mScale;
-		var child = obj.transform.GetChild(0);
-		child.GetComponent<NavMeshObstacle>().enabled = true;
-		var render = child.GetComponent<Renderer>();
-		render.material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
 		return obj;
+	}
+	void SetCursor(int inType)
+	{
+		mCursor = Instantiate(mCubes[inType]);
+		mCursor.transform.localScale = Vector3.one * mScale;
+		var child = mCursor.transform.GetChild(0);
+		child.GetComponent<NavMeshObstacle>().enabled = false;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief
 	// ------------------------------------------------------------------------
 	void Start()
 	{
+		SetCursor(0);
 		var size = mSize * 2;
 		mBlock = new Block[size.y, size.x];
 		for(int y = 0; y < mBlock.GetLength(0); ++y)
@@ -176,7 +178,7 @@ public class BlockTable : MonoBehaviour
 		// ブロック配置
 		ForechBlock((inPos, inBlock) =>
 		{
-			if(Random.Range(0, 100) == 0)
+			if(Random.Range(0, 50) == 0)
 			{
 				SetBlock(inPos, 0);
 			}
