@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.AI;
 using System.Collections.Generic;
 public class BlockTable : MonoBehaviour
 {
@@ -10,9 +9,11 @@ public class BlockTable : MonoBehaviour
 	float mScale = 0.0f;
 	[SerializeField]
 	List<GameObject> mCubes = null;
+	// カーソル
+	[SerializeField]
+	GameObject mCursor = null;
 	Block[,] mBlock;
 	public int CubeNum{get{return mCubes == null ? 0 : mCubes.Count;}}
-	GameObject mCursor = null;
 	// ------------------------------------------------------------------------
 	/// @brief
 	///
@@ -40,7 +41,7 @@ public class BlockTable : MonoBehaviour
 		{
 			return false;
 		}
-		block.Set(GenerateBlock(IndexToPos(inIndex), GetCube(inType)));
+		block.Set(GenerateBlock(IndexToPos(inIndex), inType));
 		return true;
 	}
 	// ------------------------------------------------------------------------
@@ -69,6 +70,7 @@ public class BlockTable : MonoBehaviour
 	// ------------------------------------------------------------------------
 	public void Cursor(Vector2Int inIndex, int inType)
 	{
+		mCursor.transform.localScale = Vector3.one * mScale;
 		mCursor.transform.position = IndexToPos(inIndex);
 	}
 	// ------------------------------------------------------------------------
@@ -146,26 +148,17 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	GameObject GenerateBlock(Vector3 inPos, GameObject inPrefab)
+	GameObject GenerateBlock(Vector3 inPos, int inType)
 	{
-		var obj = Instantiate(inPrefab, inPos, Quaternion.identity);
-		obj.SetActive(true);
+		var obj = Instantiate(GetCube(inType), inPos, Quaternion.identity);
 		obj.transform.localScale = Vector3.one * mScale;
 		return obj;
-	}
-	void SetCursor(int inType)
-	{
-		mCursor = Instantiate(mCubes[inType]);
-		mCursor.transform.localScale = Vector3.one * mScale;
-		var child = mCursor.transform.GetChild(0);
-		child.GetComponent<NavMeshObstacle>().enabled = false;
 	}
 	// ------------------------------------------------------------------------
 	/// @brief
 	// ------------------------------------------------------------------------
 	void Start()
 	{
-		SetCursor(0);
 		var size = mSize * 2;
 		mBlock = new Block[size.y, size.x];
 		for(int y = 0; y < mBlock.GetLength(0); ++y)
@@ -178,7 +171,7 @@ public class BlockTable : MonoBehaviour
 		// ブロック配置
 		ForechBlock((inPos, inBlock) =>
 		{
-			if(Random.Range(0, 50) == 0)
+			if(Random.Range(0, 2) == 0)
 			{
 				SetBlock(inPos, 0);
 			}
