@@ -16,6 +16,7 @@ public class ItemList
 {
 	[SerializeField]
 	List<Item> mItemList = null;
+	public int Count{get{return mItemList == null ? 0 : mItemList.Count;}}
 	public void Add(int inKey, int inCount)
 	{
 		var item = GetItem(inKey);
@@ -54,5 +55,15 @@ public class ItemList
 			}
 		}
 		return null;
+	}
+	public string ToString(int inIndex)
+	{
+		var log = string.Empty;
+		for (int i = 0; i < mItemList.Count; ++i)
+		{
+			var arrow = i == inIndex ? ">" : " ";
+			log += string.Format("{0} item{1}", arrow, i);
+		}
+		return log;
 	}
 }

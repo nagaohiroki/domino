@@ -13,7 +13,6 @@ public class BlockTable : MonoBehaviour
 	[SerializeField]
 	GameObject mCursor = null;
 	Block[,] mBlock;
-	public int CubeNum{get{return mCubes == null ? 0 : mCubes.Count;}}
 	// ------------------------------------------------------------------------
 	/// @brief
 	///
@@ -68,7 +67,7 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	public void Cursor(Vector2Int inIndex, int inType)
+	public void Cursor(Vector2Int inIndex)
 	{
 		mCursor.transform.localScale = Vector3.one * mScale;
 		mCursor.transform.position = IndexToPos(inIndex);

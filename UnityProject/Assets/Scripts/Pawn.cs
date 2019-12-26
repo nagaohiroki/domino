@@ -16,6 +16,17 @@ public class Pawn : MonoBehaviour
 	[SerializeField]
 	int mCurrentType = 0;
 	// ------------------------------------------------------------------------
+	/// @brief ダメージ
+	///
+	/// @param inDamage
+	///
+	/// @return
+	// ------------------------------------------------------------------------
+	public void Damage(int inDamage)
+	{
+		mHP -= inDamage;
+	}
+	// ------------------------------------------------------------------------
 	/// @brief 移動
 	// ------------------------------------------------------------------------
 	void Move()
@@ -46,13 +57,28 @@ public class Pawn : MonoBehaviour
 		return Vector3.zero;
 	}
 	// ------------------------------------------------------------------------
+	/// @brief スロットの変更
+	// ------------------------------------------------------------------------
+	void ChangeSlot()
+	{
+		if(Input.GetKeyDown(KeyCode.UpArrow))
+		{
+			mCurrentType = Mathf.Clamp(--mCurrentType, 0, mItemList.Count);
+		}
+		if(Input.GetKeyDown(KeyCode.DownArrow))
+		{
+			mCurrentType = Mathf.Clamp(++mCurrentType, 0, mItemList.Count);
+		}
+	}
+	// ------------------------------------------------------------------------
 	/// @brief ショット
 	// ------------------------------------------------------------------------
 	void Shot(int inType)
 	{
 		var blockTable = mGameManager.mBlockTable;
 		var index = blockTable.PosToIndex(GetCursorPos());
-		blockTable.Cursor(index, inType);
+		blockTable.Cursor(index);
+		// 追加
 		if(Input.GetButton("Fire1"))
 		{
 			if(blockTable.ClearBlock(index))
@@ -60,6 +86,7 @@ public class Pawn : MonoBehaviour
 				mItemList.Add(inType, 1);
 			}
 		}
+		// 取り除く
 		if(Input.GetButton("Fire2"))
 		{
 			if(mItemList.HasItem(inType))
@@ -71,17 +98,14 @@ public class Pawn : MonoBehaviour
 			}
 		}
 	}
-	public void Damage(int inDamage)
-	{
-		mHP -= inDamage;
-	}
 	// ------------------------------------------------------------------------
 	/// @brief テキスト
 	// ------------------------------------------------------------------------
 	void Text()
 	{
-		var text = string.Format("HP : {0}\n", mHP);
-		mText.text = text;
+		mText.text = string.Empty;
+		mText.text += string.Format("HP : {0}\n", mHP);
+		mText.text += mItemList.ToString(mCurrentType);
 	}
 	// ------------------------------------------------------------------------
 	/// @brief 更新

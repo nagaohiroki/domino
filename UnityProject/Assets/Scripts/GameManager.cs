@@ -5,8 +5,4 @@ public class GameManager : MonoBehaviour
 	public BlockTable mBlockTable = null;
 	public Pawn mPawn = null;
 	public List<Enemy> mEnemy = null;
-	void Start()
-	{
-		Application.targetFrameRate = 60;
-	}
 }
