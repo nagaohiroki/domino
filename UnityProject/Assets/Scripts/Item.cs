@@ -61,8 +61,9 @@ public class ItemList
 		var log = string.Empty;
 		for (int i = 0; i < mItemList.Count; ++i)
 		{
+			var item = mItemList[i];
 			var arrow = i == inIndex ? ">" : " ";
-			log += string.Format("{0} item{1}", arrow, i);
+			log += string.Format("{0} item{1} x {2}\n", arrow, item.mKey, item.mCount);
 		}
 		return log;
 	}

@@ -63,11 +63,11 @@ public class Pawn : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.UpArrow))
 		{
-			mCurrentType = Mathf.Clamp(--mCurrentType, 0, mItemList.Count);
+			mCurrentType = Mathf.Clamp(--mCurrentType, 0, mItemList.Count - 1);
 		}
 		if(Input.GetKeyDown(KeyCode.DownArrow))
 		{
-			mCurrentType = Mathf.Clamp(++mCurrentType, 0, mItemList.Count);
+			mCurrentType = Mathf.Clamp(++mCurrentType, 0, mItemList.Count - 1);
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -78,15 +78,17 @@ public class Pawn : MonoBehaviour
 		var blockTable = mGameManager.mBlockTable;
 		var index = blockTable.PosToIndex(GetCursorPos());
 		blockTable.Cursor(index);
-		// 追加
+		// 取り除く
 		if(Input.GetButton("Fire1"))
 		{
+			var block = blockTable.GetBlock(index);
+			int type = block.mType;
 			if(blockTable.ClearBlock(index))
 			{
-				mItemList.Add(inType, 1);
+				mItemList.Add(type, 1);
 			}
 		}
-		// 取り除く
+		// 追加
 		if(Input.GetButton("Fire2"))
 		{
 			if(mItemList.HasItem(inType))
@@ -113,6 +115,7 @@ public class Pawn : MonoBehaviour
 	void Update()
 	{
 		Move();
+		ChangeSlot();
 		Shot(mCurrentType);
 		Text();
 	}

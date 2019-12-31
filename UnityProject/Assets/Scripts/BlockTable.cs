@@ -40,7 +40,7 @@ public class BlockTable : MonoBehaviour
 		{
 			return false;
 		}
-		block.Set(GenerateBlock(IndexToPos(inIndex), inType));
+		block.Set(GenerateBlock(IndexToPos(inIndex), inType), inType);
 		return true;
 	}
 	// ------------------------------------------------------------------------
@@ -107,7 +107,7 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	Block GetBlock(Vector2Int inPos)
+	public Block GetBlock(Vector2Int inPos)
 	{
 		int numX = mBlock.GetLength(1);
 		int numY = mBlock.GetLength(0);
@@ -172,7 +172,7 @@ public class BlockTable : MonoBehaviour
 		{
 			if(Random.Range(0, 2) == 0)
 			{
-				SetBlock(inPos, 0);
+				SetBlock(inPos, Random.Range(0, mCubes.Count));
 			}
 		});
 	}
