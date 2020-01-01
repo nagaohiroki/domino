@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 public class BlockTable : MonoBehaviour
 {
-	delegate void ForechDelegate(Vector2Int inPos, Block inBlock);
 	[SerializeField]
 	Vector2Int mSize = Vector2Int.zero;
 	[SerializeField]
 	float mScale = 0.0f;
+	// ブロック
 	[SerializeField]
 	List<GameObject> mCubes = null;
 	// カーソル
@@ -120,26 +120,6 @@ public class BlockTable : MonoBehaviour
 		return mBlock[y, x];
 	}
 	// ------------------------------------------------------------------------
-	/// @brief 周囲
-	///
-	/// @param inDelegate
-	///
-	/// @return
-	// ------------------------------------------------------------------------
-	void ForechBlock(ForechDelegate inDelegate)
-	{
-		int numX = mBlock.GetLength(1);
-		int numY = mBlock.GetLength(0);
-		var half = new Vector2Int(numX / 2, numY / 2);
-		for(int y = 0; y < numY; ++y)
-		{
-			for(int x = 0; x < numX; ++x)
-			{
-				inDelegate(new Vector2Int(x, y) - half, mBlock[y, x]);
-			}
-		}
-	}
-	// ------------------------------------------------------------------------
 	/// @brief ブロック生成
 	///
 	/// @param inPos
@@ -160,20 +140,22 @@ public class BlockTable : MonoBehaviour
 	{
 		var size = mSize * 2;
 		mBlock = new Block[size.y, size.x];
-		for(int y = 0; y < mBlock.GetLength(0); ++y)
+		for(int y = 0; y < size.y; ++y)
 		{
-			for(int x = 0; x < mBlock.GetLength(1); ++x)
+			for(int x = 0; x < size.x; ++x)
 			{
 				mBlock[y, x] = new Block();
 			}
 		}
-		// ブロック配置
-		ForechBlock((inPos, inBlock) =>
+		for(int y = 0; y < size.y; ++y)
 		{
-			if(Random.Range(0, 2) == 0)
+			for(int x = 0; x < size.x; ++x)
 			{
-				SetBlock(inPos, Random.Range(0, mCubes.Count));
+				if(Random.Range(0, 2) == 0)
+				{
+					SetBlock(new Vector2Int(x - mSize.x, y - mSize.y), Random.Range(0, mCubes.Count));
+				}
 			}
-		});
+		}
 	}
 }

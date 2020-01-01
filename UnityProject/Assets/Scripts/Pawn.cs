@@ -82,6 +82,10 @@ public class Pawn : MonoBehaviour
 		if(Input.GetButton("Fire1"))
 		{
 			var block = blockTable.GetBlock(index);
+			if(block == null)
+			{
+				return;
+			}
 			int type = block.mType;
 			if(blockTable.ClearBlock(index))
 			{
