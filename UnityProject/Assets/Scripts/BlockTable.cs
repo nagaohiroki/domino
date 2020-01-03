@@ -12,7 +12,7 @@ public class BlockTable : MonoBehaviour
 	// カーソル
 	[SerializeField]
 	GameObject mCursor = null;
-	Block[,] mBlock;
+	BlockParam[,] mBlock;
 	// ------------------------------------------------------------------------
 	/// @brief
 	///
@@ -107,7 +107,7 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	public Block GetBlock(Vector2Int inPos)
+	public BlockParam GetBlock(Vector2Int inPos)
 	{
 		int numX = mBlock.GetLength(1);
 		int numY = mBlock.GetLength(0);
@@ -139,12 +139,12 @@ public class BlockTable : MonoBehaviour
 	void Start()
 	{
 		var size = mSize * 2;
-		mBlock = new Block[size.y, size.x];
+		mBlock = new BlockParam[size.y, size.x];
 		for(int y = 0; y < size.y; ++y)
 		{
 			for(int x = 0; x < size.x; ++x)
 			{
-				mBlock[y, x] = new Block();
+				mBlock[y, x] = new BlockParam();
 			}
 		}
 		for(int y = 0; y < size.y; ++y)

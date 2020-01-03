@@ -37,7 +37,7 @@ public class Pawn : MonoBehaviour
 		var agent = GetComponent<NavMeshAgent>();
 		if(agent != null && agent.enabled)
 		{
-			agent.Move(vel * mSpeed * Time.deltaTime);
+			agent.Move(vel.normalized * mSpeed * Time.deltaTime);
 		}
 		Camera.main.transform.parent.position = transform.position;
 	}
@@ -63,12 +63,21 @@ public class Pawn : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.UpArrow))
 		{
-			mCurrentType = Mathf.Clamp(--mCurrentType, 0, mItemList.Count - 1);
+			ChangeSlot(mCurrentType - 1);
 		}
 		if(Input.GetKeyDown(KeyCode.DownArrow))
 		{
-			mCurrentType = Mathf.Clamp(++mCurrentType, 0, mItemList.Count - 1);
+			ChangeSlot(mCurrentType + 1);
 		}
+	}
+	// ------------------------------------------------------------------------
+	/// @brief スロット変更
+	///
+	/// @param inIndex
+	// ------------------------------------------------------------------------
+	void ChangeSlot(int inIndex)
+	{
+		mCurrentType = Mathf.Clamp(inIndex, 0, mItemList.Count - 1);
 	}
 	// ------------------------------------------------------------------------
 	/// @brief ショット

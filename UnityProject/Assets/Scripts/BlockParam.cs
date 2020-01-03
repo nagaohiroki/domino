@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
-public class Block
+public class BlockParam
 {
 	GameObject mGameObject;
 	public bool mUsed{get; private set;}
-	public int mType{get;private set;}
+	public int mType{get; private set;}
+	public int mHP = 0;
 	public void Clear()
 	{
 		mUsed = false;
@@ -15,5 +16,14 @@ public class Block
 		mUsed = true;
 		mType = inType;
 		mGameObject = inGameObject;
+	}
+	public void Damage(int inDamage)
+	{
+		mHP += inDamage;
+		if(mHP <= 0)
+		{
+			Clear();
+			return;
+		}
 	}
 }
