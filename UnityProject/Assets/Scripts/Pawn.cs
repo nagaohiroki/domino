@@ -82,7 +82,7 @@ public class Pawn : MonoBehaviour
 	// ------------------------------------------------------------------------
 	/// @brief ショット
 	// ------------------------------------------------------------------------
-	void Shot(int inType)
+	void Shot()
 	{
 		var blockTable = mGameManager.mBlockTable;
 		var index = blockTable.PosToIndex(GetCursorPos());
@@ -90,27 +90,35 @@ public class Pawn : MonoBehaviour
 		// 取り除く
 		if(Input.GetButton("Fire1"))
 		{
-			var block = blockTable.GetBlock(index);
-			if(block == null)
-			{
-				return;
-			}
-			int type = block.mType;
-			if(blockTable.ClearBlock(index))
-			{
-				mItemList.Add(type, 1);
-			}
+			DamageBlock(index);
 		}
-		// 追加
+		// 建築
 		if(Input.GetButton("Fire2"))
 		{
-			if(mItemList.HasItem(inType))
-			{
-				if(blockTable.SetBlock(index, inType))
-				{
-					mItemList.Sub(inType, 1);
-				}
-			}
+			BuildBlock(index);
+		}
+	}
+	void DamageBlock(Vector2Int inIndex)
+	{
+		var block = mGameManager.mBlockTable.GetBlock(inIndex);
+		if(block.IsEmpty)
+		{
+			return;
+		}
+		mItemList.Add(block.BlockType, 1);
+		block.Clear();
+	}
+	void BuildBlock(Vector2Int inIndex)
+	{
+		var block = mGameManager.mBlockTable.GetBlock(inIndex);
+		if(!block.IsEmpty)
+		{
+			return;
+		}
+		if(mItemList.HasItem(mCurrentType))
+		{
+			mItemList.Sub(mCurrentType, 1);
+			mGameManager.mBlockTable.SetBlock(inIndex, mCurrentType);
 		}
 	}
 	// ------------------------------------------------------------------------
@@ -129,7 +137,7 @@ public class Pawn : MonoBehaviour
 	{
 		Move();
 		ChangeSlot();
-		Shot(mCurrentType);
+		Shot();
 		Text();
 	}
 }

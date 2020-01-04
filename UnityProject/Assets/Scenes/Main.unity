@@ -670,12 +670,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e9b9154ca0b4597a9f85c8b7d7cd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mSize: {x: 20, y: 20}
+  mSize: {x: 40, y: 40}
   mScale: 3
-  mCubes:
-  - {fileID: 5558694905140818230, guid: 8b3ed79f580f54fc583e317a0e6622a7, type: 3}
-  - {fileID: 1182128454695218389, guid: d677a680f43dd481ea2480db3495f327, type: 3}
-  mGround: {fileID: 1743833371}
+  mBlocks:
+  - {fileID: 4034045317269934845, guid: 8b3ed79f580f54fc583e317a0e6622a7, type: 3}
+  - {fileID: 4089178945096702304, guid: d677a680f43dd481ea2480db3495f327, type: 3}
   mCursor: {fileID: 1049027770}
 --- !u!4 &1573755982
 Transform:

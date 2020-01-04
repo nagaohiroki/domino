@@ -8,57 +8,21 @@ public class BlockTable : MonoBehaviour
 	float mScale = 0.0f;
 	// ブロック
 	[SerializeField]
-	List<GameObject> mCubes = null;
+	List<Block> mBlocks = null;
 	// カーソル
 	[SerializeField]
 	GameObject mCursor = null;
+	// パラメータ
 	BlockParam[,] mBlock;
-	// ------------------------------------------------------------------------
-	/// @brief
-	///
-	/// @param inIndex
-	///
-	/// @return
-	// ------------------------------------------------------------------------
-	GameObject GetCube(int inIndex)
-	{
-		if(mCubes == null || inIndex < 0 || inIndex >= mCubes.Count)
-		{
-			return null;
-		}
-		return mCubes[inIndex];
-	}
 	// ------------------------------------------------------------------------
 	/// @brief セット
 	///
 	/// @param inIndex
 	// ------------------------------------------------------------------------
-	public bool SetBlock(Vector2Int inIndex, int inType)
+	public void SetBlock(Vector2Int inIndex, int inType)
 	{
 		var block = GetBlock(inIndex);
-		if(block == null || block.mUsed)
-		{
-			return false;
-		}
-		block.Set(GenerateBlock(IndexToPos(inIndex), inType), inType);
-		return true;
-	}
-	// ------------------------------------------------------------------------
-	/// @brief 削除
-	///
-	/// @param inIndex
-	///
-	/// @return
-	// ------------------------------------------------------------------------
-	public bool ClearBlock(Vector2Int inIndex)
-	{
-		var block = GetBlock(inIndex);
-		if(block == null || !block.mUsed)
-		{
-			return false;
-		}
-		block.Clear();
-		return true;
+		block.Set(GenerateBlock(inIndex, inType), inType);
 	}
 	// ------------------------------------------------------------------------
 	/// @brief カーソル位置
@@ -82,8 +46,8 @@ public class BlockTable : MonoBehaviour
 	public Vector2Int PosToIndex(Vector3 inPos)
 	{
 		var index = Vector2Int.zero;
-		index.x = Mathf.FloorToInt(inPos.x / mScale);
-		index.y = Mathf.FloorToInt(inPos.z / mScale);
+		index.x = Mathf.FloorToInt(inPos.x / mScale) + mSize.x / 2;
+		index.y = Mathf.FloorToInt(inPos.z / mScale) + mSize.y / 2;
 		return index;
 	}
 	// ------------------------------------------------------------------------
@@ -96,8 +60,8 @@ public class BlockTable : MonoBehaviour
 	Vector3 IndexToPos(Vector2Int inIndex)
 	{
 		var pos = Vector3.zero;
-		pos.x = inIndex.x * mScale;
-		pos.z = inIndex.y * mScale;
+		pos.x = (inIndex.x - mSize.x / 2) * mScale;
+		pos.z = (inIndex.y - mSize.y / 2) * mScale;
 		return pos;
 	}
 	// ------------------------------------------------------------------------
@@ -109,15 +73,11 @@ public class BlockTable : MonoBehaviour
 	// ------------------------------------------------------------------------
 	public BlockParam GetBlock(Vector2Int inPos)
 	{
-		int numX = mBlock.GetLength(1);
-		int numY = mBlock.GetLength(0);
-		int x =  numX / 2 + inPos.x;
-		int y =  numY / 2 + inPos.y;
-		if(x < 0 || x >= numX || y < 0 || y >= numY)
+		if(inPos.x < 0 || inPos.x >= mSize.x || inPos.y < 0 || inPos.y >= mSize.y)
 		{
 			return null;
 		}
-		return mBlock[y, x];
+		return mBlock[inPos.y, inPos.x];
 	}
 	// ------------------------------------------------------------------------
 	/// @brief ブロック生成
@@ -127,33 +87,30 @@ public class BlockTable : MonoBehaviour
 	///
 	/// @return
 	// ------------------------------------------------------------------------
-	GameObject GenerateBlock(Vector3 inPos, int inType)
+	Block GenerateBlock(Vector2Int inIndex, int inType)
 	{
-		var obj = Instantiate(GetCube(inType), inPos, Quaternion.identity);
+		if(mBlocks == null || inType < 0 || inType >= mBlocks.Count)
+		{
+			return null;
+		}
+		var obj = Instantiate(mBlocks[inType], IndexToPos(inIndex), Quaternion.identity);
 		obj.transform.localScale = Vector3.one * mScale;
 		return obj;
 	}
 	// ------------------------------------------------------------------------
-	/// @brief
+	/// @brief 開始
 	// ------------------------------------------------------------------------
 	void Start()
 	{
-		var size = mSize * 2;
-		mBlock = new BlockParam[size.y, size.x];
-		for(int y = 0; y < size.y; ++y)
+		mBlock = new BlockParam[mSize.y, mSize.x];
+		for(int y = 0; y < mSize.y; ++y)
 		{
-			for(int x = 0; x < size.x; ++x)
+			for(int x = 0; x < mSize.x; ++x)
 			{
 				mBlock[y, x] = new BlockParam();
-			}
-		}
-		for(int y = 0; y < size.y; ++y)
-		{
-			for(int x = 0; x < size.x; ++x)
-			{
 				if(Random.Range(0, 2) == 0)
 				{
-					SetBlock(new Vector2Int(x - mSize.x, y - mSize.y), Random.Range(0, mCubes.Count));
+					SetBlock(new Vector2Int(x, y), Random.Range(0, mBlocks.Count));
 				}
 			}
 		}
