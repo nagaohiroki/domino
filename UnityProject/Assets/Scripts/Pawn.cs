@@ -98,6 +98,11 @@ public class Pawn : MonoBehaviour
 			BuildBlock(index);
 		}
 	}
+	// ------------------------------------------------------------------------
+	/// @brief ダメージ
+	///
+	/// @param inIndex
+	// ------------------------------------------------------------------------
 	void DamageBlock(Vector2Int inIndex)
 	{
 		var block = mGameManager.mBlockTable.GetBlock(inIndex);
@@ -105,9 +110,18 @@ public class Pawn : MonoBehaviour
 		{
 			return;
 		}
-		mItemList.Add(block.BlockType, 1);
-		block.Clear();
+		int type = block.BlockType;
+		block.Damage(-1);
+		if(block.IsEmpty)
+		{
+			mItemList.Add(type, 1);
+		}
 	}
+	// ------------------------------------------------------------------------
+	/// @brief
+	///
+	/// @param inIndex
+	// ------------------------------------------------------------------------
 	void BuildBlock(Vector2Int inIndex)
 	{
 		var block = mGameManager.mBlockTable.GetBlock(inIndex);

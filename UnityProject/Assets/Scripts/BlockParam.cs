@@ -6,11 +6,6 @@ public class BlockParam
 	int mBlockType = -1;
 	public int BlockType{get{return mBlockType;}}
 	public bool IsEmpty{get{return mBlockType == -1;}}
-	public void Clear()
-	{
-		mBlockType = -1;
-		GameObject.Destroy(mBlock.gameObject);
-	}
 	public void Set(Block inBlock, int inType)
 	{
 		mBlockType = inType;
@@ -25,5 +20,10 @@ public class BlockParam
 			Clear();
 			return;
 		}
+	}
+	void Clear()
+	{
+		mBlockType = -1;
+		GameObject.Destroy(mBlock.gameObject);
 	}
 }
